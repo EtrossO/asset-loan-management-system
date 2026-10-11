@@ -1,0 +1,9 @@
+{
+    "name": "ict/asset-loan",
+    "description": "ICT Asset Loan Management System",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "chillerlan/php-qrcode": "^5.0"
+    }
+}
