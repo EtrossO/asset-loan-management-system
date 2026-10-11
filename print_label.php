@@ -21,7 +21,7 @@ if (!$asset) {
     die('Asset not found.');
 }
 
-$qr_url = 'asset_qr.php?id=' . $asset_id . '&token=' . generate_qr_token($asset_id);
+$qr_url = $BASE_URL . '/asset_qr.php?id=' . $asset_id . '&token=' . generate_qr_token($asset_id);
 
 $options = new QROptions([
     'outputType'    => QRCode::OUTPUT_IMAGE_PNG,

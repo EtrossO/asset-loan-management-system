@@ -403,14 +403,35 @@ function get_asset_by_token(PDO $pdo, int $asset_id, string $token): ?array {
 
 function get_active_loan_for_asset(PDO $pdo, int $asset_id): ?array {
     $stmt = $pdo->prepare(
-        "SELECT l.*, b.name AS borrower_name, b.department AS borrower_dept, b.phone AS borrower_phone, b.email AS borrower_email
+        "SELECT l.*, b.name AS borrower_name, b.department AS borrower_dept, 
+                b.phone AS borrower_phone, b.email AS borrower_email, b.id_number AS borrower_id_number,
+                u.name AS issued_by_name
          FROM loans l
          JOIN borrowers b ON l.borrower_id = b.id
+         LEFT JOIN users u ON l.issued_by = u.id
          WHERE l.asset_id = ? AND l.return_date IS NULL
          ORDER BY l.id DESC LIMIT 1"
     );
     $stmt->execute([$asset_id]);
     return $stmt->fetch() ?: null;
+}
+
+function get_asset_loan_history(PDO $pdo, int $asset_id): array {
+    $stmt = $pdo->prepare(
+        "SELECT l.*, b.name AS borrower_name, b.department AS borrower_dept,
+                u.name AS issued_by_name
+         FROM loans l
+         JOIN borrowers b ON l.borrower_id = b.id
+         LEFT JOIN users u ON l.issued_by = u.id
+         WHERE l.asset_id = ? AND l.return_date IS NOT NULL
+         ORDER BY l.return_date DESC LIMIT 10"
+    );
+    $stmt->execute([$asset_id]);
+    return $stmt->fetchAll();
+}
+
+function get_all_active_borrowers(PDO $pdo): array {
+    return $pdo->query("SELECT id, name, id_number, department, phone FROM borrowers ORDER BY name ASC")->fetchAll();
 }
 
 // ============================================================

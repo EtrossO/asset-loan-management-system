@@ -189,7 +189,7 @@ $filter_category = $_GET['category'] ?? '';
                     </td></tr>
                 <?php else: ?>
                     <?php foreach ($assets as $asset):
-                        $qr_url = 'asset_qr.php?id=' . $asset['id'] . '&token=' . generate_qr_token((int) $asset['id']);
+                        $qr_url = $BASE_URL . '/asset_qr.php?id=' . $asset['id'] . '&token=' . generate_qr_token((int) $asset['id']);
                         $qr_data_uri = generate_qr_data_uri($qr_url);
                     ?>
                     <tr>
