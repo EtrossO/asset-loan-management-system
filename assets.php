@@ -83,8 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $asset = get_asset_by_id($pdo, $id);
             if (!$asset) {
                 $error = 'Asset not found.';
-            } elseif (asset_has_loans($pdo, $id)) {
-                $error = 'Cannot delete asset with loan history.';
             } else {
                 try {
                     delete_asset($pdo, $id);
@@ -229,7 +227,6 @@ $filter_category = $_GET['category'] ?? '';
                                 <a href="print_label.php?id=<?= (int) $asset['id'] ?>" target="_blank" class="btn btn-sm btn-outline-secondary btn-icon" title="Print Label">
                                     <i class="bi bi-printer"></i>
                                 </a>
-                                <?php if (!asset_has_loans($pdo, (int) $asset['id'])): ?>
                                 <form method="post" action="assets.php" class="d-inline"
                                       onsubmit="return confirmDelete('Delete asset <?= e($asset['asset_tag']) ?>?')">
                                     <?= csrf_field() ?>
@@ -239,7 +236,6 @@ $filter_category = $_GET['category'] ?? '';
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
-                                <?php endif; ?>
                             </div>
                         </td>
                     </tr>
