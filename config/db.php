@@ -9,7 +9,7 @@ $DB_PASS = '';
 $DB_CHARSET = 'utf8mb4';
 
 // Base URL for QR code generation
-$BASE_URL = 'http://10.142.11.45/asset-loan';
+$BASE_URL = 'http://10.142.10.237/asset-loan';
 
 // CSRF token secret (change this to a random string in production)
 $CSRF_SECRET = 'change-me-to-a-random-string-in-production';

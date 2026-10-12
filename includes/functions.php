@@ -234,6 +234,17 @@ function borrower_has_active_loans(PDO $pdo, int $borrower_id): bool {
     return (int) $stmt->fetchColumn() > 0;
 }
 
+function borrower_has_loans(PDO $pdo, int $borrower_id): bool {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM loans WHERE borrower_id = ?");
+    $stmt->execute([$borrower_id]);
+    return (int) $stmt->fetchColumn() > 0;
+}
+
+function delete_borrower(PDO $pdo, int $id): void {
+    $stmt = $pdo->prepare("DELETE FROM borrowers WHERE id = ?");
+    $stmt->execute([$id]);
+}
+
 // ============================================================
 // LOAN FUNCTIONS
 // ============================================================

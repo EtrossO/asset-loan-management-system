@@ -64,6 +64,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+
+        if ($post_action === 'delete') {
+            $id = (int) ($_POST['id'] ?? 0);
+            $borrower = get_borrower_by_id($pdo, $id);
+            if (!$borrower) {
+                $error = 'Borrower not found.';
+            } elseif (borrower_has_loans($pdo, $id)) {
+                $error = 'Cannot delete borrower with loan history.';
+            } else {
+                try {
+                    delete_borrower($pdo, $id);
+                    set_flash('success', 'Borrower "' . e($borrower['name']) . '" deleted.');
+                    header('Location: borrowers.php');
+                    exit;
+                } catch (Exception $ex) {
+                    $error = 'Failed to delete borrower: ' . $ex->getMessage();
+                }
+            }
+        }
     }
 }
 
@@ -142,9 +161,22 @@ $filter_search = $_GET['search'] ?? '';
                             <?php endif; ?>
                         </td>
                         <td data-label="Actions" class="td-actions">
-                            <a href="borrowers.php?action=edit&id=<?= (int) $b['id'] ?>" class="btn btn-sm btn-outline-primary btn-icon" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </a>
+                            <div class="d-flex gap-1">
+                                <a href="borrowers.php?action=edit&id=<?= (int) $b['id'] ?>" class="btn btn-sm btn-outline-primary btn-icon" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <?php if (!borrower_has_loans($pdo, (int) $b['id'])): ?>
+                                <form method="post" action="borrowers.php" class="d-inline"
+                                      onsubmit="return confirmDelete('Delete borrower &quot;<?= e($b['name']) ?>&quot;?')">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="id" value="<?= (int) $b['id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-icon" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                                <?php endif; ?>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
