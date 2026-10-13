@@ -23,8 +23,8 @@ if %errorlevel%==0 (
 
 echo.
 echo ============================================
-echo   System IP: 10.142.10.237
-echo   URL: http://10.142.10.237/asset-loan/
+echo   System IP: 10.142.11.77
+echo   URL: http://10.142.11.77/asset-loan/
 echo ============================================
 echo.
 pause

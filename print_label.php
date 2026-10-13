@@ -37,6 +37,7 @@ $qr_data_uri = (new QRCode($options))->render($qr_url);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Label - <?= e($asset['asset_tag']) ?></title>
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg?v=<?= time() ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -150,6 +151,13 @@ $qr_data_uri = (new QRCode($options))->render($qr_url);
             margin-top: 0.5mm;
             text-transform: uppercase;
             letter-spacing: 0.3px;
+        }
+
+        .sticker-label .return-text {
+            font-size: 5pt;
+            color: #555;
+            margin-top: 0.5mm;
+            font-style: italic;
         }
 
         /* ============================================
@@ -286,6 +294,13 @@ $qr_data_uri = (new QRCode($options))->render($qr_url);
             letter-spacing: 0.3px;
         }
 
+        .sticker-large .sl-return {
+            font-size: 5pt;
+            color: #555;
+            margin-top: 0.5mm;
+            font-style: italic;
+        }
+
         /* Multi-copy for stickers */
         .sticker-grid {
             display: flex;
@@ -340,7 +355,8 @@ $qr_data_uri = (new QRCode($options))->render($qr_url);
                 <img src="<?= $qr_data_uri ?>" alt="QR" class="qr-img">
                 <div class="asset-tag"><?= e($asset['asset_tag']) ?></div>
                 <div class="asset-name"><?= e($asset['name']) ?></div>
-                <div class="org-name">ICT Asset Management</div>
+                <div class="org-name">BPTM MADA</div>
+                <div class="return-text">If found, please return to BPTM MADA</div>
             </div>
             <?php endfor; ?>
         </div>
@@ -364,7 +380,8 @@ $qr_data_uri = (new QRCode($options))->render($qr_url);
                     <?php if ($asset['serial_no']): ?>
                     <div class="sl-detail">S/N: <?= e($asset['serial_no']) ?></div>
                     <?php endif; ?>
-                    <div class="sl-org">ICT Asset Management</div>
+                    <div class="sl-org">BPTM MADA</div>
+                    <div class="sl-return">If found, please return to BPTM MADA</div>
                 </div>
             </div>
             <?php endfor; ?>
@@ -380,7 +397,7 @@ $qr_data_uri = (new QRCode($options))->render($qr_url);
                 <div class="hole-punch"></div>
                 <div class="tag-content">
                     <div class="tag-info">
-                        <div class="tag-org">ICT Asset Management</div>
+                        <div class="tag-org">BPTM MADA</div>
                         <div class="tag-asset-tag"><?= e($asset['asset_tag']) ?></div>
                         <div class="tag-name"><?= e($asset['name']) ?></div>
                         <?php if ($asset['brand'] || $asset['model']): ?>
@@ -390,7 +407,7 @@ $qr_data_uri = (new QRCode($options))->render($qr_url);
                         <div class="tag-detail">S/N: <?= e($asset['serial_no']) ?></div>
                         <?php endif; ?>
                         <div class="tag-detail" style="margin-top:1mm;font-style:italic;">
-                            If found, please return to ICT Dept.
+                            If found, please return to BPTM MADA.
                         </div>
                     </div>
                     <div class="tag-qr">

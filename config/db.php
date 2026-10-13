@@ -8,8 +8,10 @@ $DB_USER = 'root';
 $DB_PASS = '';
 $DB_CHARSET = 'utf8mb4';
 
-// Base URL for QR code generation
-$BASE_URL = 'http://10.142.10.237/asset-loan';
+// Base URL for QR code generation (auto-detect)
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+$BASE_URL = $protocol . '://' . $host . '/asset-loan';
 
 // CSRF token secret (change this to a random string in production)
 $CSRF_SECRET = 'change-me-to-a-random-string-in-production';

@@ -24,7 +24,7 @@ if %errorlevel%==0 (
 timeout /t 2 /nobreak >nul
 netstat -ano | findstr ":80 :3306" | findstr "LISTENING" >nul
 if %errorlevel%==0 (
-    echo [OK] System is ready at http://10.142.10.237/asset-loan/
+    echo [OK] System is ready at http://10.142.11.77/asset-loan/
 ) else (
     echo [!!] System may not be ready. Check services.
 )
