@@ -1,7 +1,38 @@
 <?php
 declare(strict_types=1);
 
+ob_start();
+session_start();
+
 require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/config/db.php';
+require __DIR__ . '/includes/auth.php';
+require __DIR__ . '/includes/functions.php';
+
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'generate_tag') {
+    ob_end_clean();
+    header('Content-Type: application/json');
+    
+    if (!isset($_SESSION['user_id'])) {
+        echo json_encode(['error' => 'Not logged in']);
+        exit;
+    }
+    
+    $category = $_GET['category'] ?? '';
+    $brand = $_GET['brand'] ?? '';
+    
+    if ($category === '' || !in_array($category, asset_categories(), true)) {
+        echo json_encode(['error' => 'Invalid category']);
+        exit;
+    }
+    
+    $tag = generate_asset_tag($pdo, $category, $brand);
+    echo json_encode(['tag' => $tag]);
+    exit;
+}
+
+ob_end_flush();
+
 require __DIR__ . '/includes/header.php';
 require_login();
 

@@ -2,18 +2,9 @@
 // Reusable asset form fields (included by assets.php for add/edit)
 // Expected variables: $asset (array or null for add mode)
 $asset = $asset ?? null;
+$is_edit = $asset !== null;
 ?>
 <div class="row g-3">
-    <div class="col-md-4">
-        <label for="asset_tag" class="form-label">Asset Tag <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="asset_tag" name="asset_tag"
-               value="<?= e($asset['asset_tag'] ?? '') ?>" required>
-    </div>
-    <div class="col-md-4">
-        <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="name" name="name"
-               value="<?= e($asset['name'] ?? '') ?>" required>
-    </div>
     <div class="col-md-4">
         <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
         <select class="form-select" id="category" name="category" required>
@@ -37,14 +28,34 @@ $asset = $asset ?? null;
         </select>
     </div>
     <div class="col-md-4">
+        <label for="asset_tag" class="form-label">Asset Tag <span class="text-danger">*</span> <small class="text-muted">(auto)</small></label>
+        <input type="text" class="form-control" id="asset_tag" name="asset_tag"
+               value="<?= e($asset['asset_tag'] ?? '') ?>" 
+               <?= !$is_edit ? 'readonly' : '' ?> 
+               required>
+        <?php if (!$is_edit): ?>
+        <small class="text-muted">Auto-generated from category &amp; brand</small>
+        <?php endif; ?>
+    </div>
+    <div class="col-md-6">
+        <label for="name" class="form-label">Name / Specs <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="name" name="name"
+               value="<?= e($asset['name'] ?? '') ?>" 
+               placeholder="e.g. EliteBook 840 G10, 14 inch, Intel i7, 16GB RAM"
+               required>
+        <small class="text-muted">Model name and specifications</small>
+    </div>
+    <div class="col-md-3">
         <label for="model" class="form-label">Model</label>
         <input type="text" class="form-control" id="model" name="model"
-               value="<?= e($asset['model'] ?? '') ?>">
+               value="<?= e($asset['model'] ?? '') ?>"
+               placeholder="e.g. 840 G10">
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <label for="serial_no" class="form-label">Serial Number</label>
         <input type="text" class="form-control" id="serial_no" name="serial_no"
-               value="<?= e($asset['serial_no'] ?? '') ?>">
+               value="<?= e($asset['serial_no'] ?? '') ?>"
+               placeholder="e.g. CN12345678">
     </div>
     <?php if ($asset): ?>
     <div class="col-md-4">
@@ -65,7 +76,38 @@ $asset = $asset ?? null;
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    var categorySelect = document.getElementById('category');
+    var brandSelect = document.getElementById('brand');
+    var assetTagInput = document.getElementById('asset_tag');
     var nameInput = document.getElementById('name');
+    var isEditMode = <?= $is_edit ? 'true' : 'false' ?>;
+    
+    function generateAssetTag() {
+        if (isEditMode) return;
+        
+        var category = categorySelect.value;
+        var brand = brandSelect.value;
+        
+        if (!category) {
+            assetTagInput.value = '';
+            return;
+        }
+        
+        fetch('assets.php?ajax=generate_tag&category=' + encodeURIComponent(category) + '&brand=' + encodeURIComponent(brand))
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.tag) {
+                    assetTagInput.value = data.tag;
+                }
+            })
+            .catch(function(error) {
+                console.error('Error generating tag:', error);
+            });
+    }
+    
+    categorySelect.addEventListener('change', generateAssetTag);
+    brandSelect.addEventListener('change', generateAssetTag);
+    
     if (nameInput) {
         nameInput.addEventListener('blur', function() {
             this.value = this.value.replace(/\b\w/g, function(l) { return l.toUpperCase(); });

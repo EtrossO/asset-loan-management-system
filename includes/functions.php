@@ -493,3 +493,26 @@ function asset_brands(): array {
         'Other',
     ];
 }
+
+function generate_asset_tag(PDO $pdo, string $category, string $brand = ''): string {
+    $cat_code = strtoupper(substr($category, 0, 3));
+    $brand_code = $brand ? strtoupper(substr($brand, 0, 3)) : 'GEN';
+    
+    $prefix = $cat_code . $brand_code;
+    
+    $stmt = $pdo->prepare(
+        "SELECT asset_tag FROM assets WHERE asset_tag LIKE ? ORDER BY asset_tag DESC LIMIT 1"
+    );
+    $stmt->execute([$prefix . '%']);
+    $last_asset = $stmt->fetch();
+    
+    if ($last_asset) {
+        $last_tag = $last_asset['asset_tag'];
+        $last_num = (int) substr($last_tag, strlen($prefix));
+        $next_num = $last_num + 1;
+    } else {
+        $next_num = 1;
+    }
+    
+    return $prefix . str_pad((string) $next_num, 2, '0', STR_PAD_LEFT);
+}
